@@ -6,7 +6,7 @@
 typedef int Status;
 typedef Status (*func_cmp)(void *a,void *b);
 //typedef Status(*func_cmp)(double &a, double &b);
-typedef Status (*pvisit)(int temp);
+typedef Status (*pvisit)(int *temp);
 
 #define TRUE 1
 #define FALSE 0
@@ -209,6 +209,8 @@ struct LNode{
 	struct LNode *next;
 };
 
+
+// 单链表
 template <typename T>
 class LinkList {
 private:
@@ -220,16 +222,17 @@ public:
 		phead = &head;
 		ptail = phead;
 		phead->next = nullptr;
+		this->len = 0;
 	}
 	~LinkList() {
 		LNode<T> *p = phead->next;
 		LNode<T> *q = p;
-		while (q->next!=nullptr) {
+		while (q->next->next!=nullptr) {
 			p = q->next;
-			if (q != nullptr) {
-				free(q);
-				q = p;
+			if (q != NULL) {
+				delete q;
 			}
+			q = p;
 		}
 		this->len = 0;
 	}
@@ -237,12 +240,13 @@ public:
 		phead = &head;
 		ptail = phead;
 		phead->next = nullptr;
+		this->len = 0;
 		return OK;
 	}
 	Status ClearList() {		// 将线性链表置为空表， 并释放原链表的结点空间
 		LNode<T> *p = phead->next;
 		LNode<T> *q = p;
-		while (q->next != nullptr) {
+		while (q!=this->ptail) {
 			p = q->next;
 			if (q != nullptr) {
 				free(q);
@@ -250,6 +254,8 @@ public:
 			}
 		}
 		this->len = 0;
+		ptail = phead;
+		phead->next = nullptr;
 		return OK;
 	}
 	Status InsFirst(LNode<T> *s) {
@@ -257,29 +263,111 @@ public:
 		s->next = this->phead->next;
 		this->phead->next = s;
 		if (this->phead == this->ptail) this->ptail = s;
+		++this->len;
 		return OK;
 	}
 	Status DelFirst(LNode<T> *s) {
-		LNode *q = this->phead->next;
+		LNode<T> *q = this->phead->next;
 		*s = *q;
 		this->phead->next = this->phead->next->next;
 		delete q;
 		q = nullptr;
+		--this->len;
 		return OK;
 	}
 	Status Append(LNode<T> *s) {
 		// 将指针s指向的一串结点链接在链表的最后一个结点之后， 并改变链表的尾指针指向新的结点
-		LNode *p = s;
-		while (p->next != nullptr) ++p;
+		LNode<T> *p = s;
+		int plus = 1;
+		while (p->next != nullptr) {
+			p = p->next;
+			++plus;
+		}
 		this->ptail->next = s;
 		this->ptail = p;
+		this->ptail->next = nullptr;
+		this->len = this->len + plus;
+		return OK;
+	}
+	LNode<T>& Remove() {
+		LNode<T> *p = this->phead;
+		while (p->next != this->ptail) p = p->next;
+		LNode<T> *tmp = new LNode<T>;
+		tmp = this->ptail;
+		free(this->ptail);
+		this->ptail = p;
+		--this->len;
+		return *tmp;
+	}
+	Status InsBefore(LNode<T>* &p, LNode<T> *s) {
+		LNode<T> *cur = this->phead;
+		while (cur->next != p) cur = cur->next;
+		s->next = p;
+		cur->next = s;
+		++this->len;
+		return OK;
+	}
+	Status InsAfter(LNode<T>* &p, LNode<T> *s) {
+		s->next = p->next;
+		p->next = s;
+		++this->len;
+		return OK;
+	}
+	Status SetCurElem(LNode<T>* &p, T e) {
+		p->data = e;
+		return OK;
+	}
+	T& GetCurElem(LNode<T> *p) {
+		return p->data;
+	}
+	Status ListEmpty() {
+		return (this->phead == this->ptail);
+	}
+	int ListLength() {
+		return this->len;
+	}
+	LNode<T>* GetHead() {
+		return this->phead;
+	}
+	LNode<T>* GetLast() {
+		return this->ptail;
+	}
+	LNode<T>* PriorPos(LNode<T> *p) {
+		LNode<T> *cur = this->phead;
+		while (cur->next != p && cur->next!=nullptr) cur = cur->next;
+		if (cur->next == p) return p;
+		else return NULL;
+	}
+	LNode<T>* NextPos(LNode<T> *p) {
+		if (p->next != NULL) return p->next;
+		else return NULL;
+	}
+	LNode<T>* LocatePos(int i) {
+		if (i > this->len) return ERROR;
+		LNode<T> *p = new LNode<T>;
+		p = this->phead;
+		int cnt = 0;
+		while (cnt < i) {
+			++cnt;
+			p = p->next;
+		}
+		return p;
+	}
+	LNode<T>* LocateElem(T e, func_cmp compare) {
+		LNode<T> *p = new LNode<T>;
+		p = this->phead;
+		while (p->next != nullptr) {
+			p = p->next;
+			if (compare(p, e)) return p;
+		}	
+		return nullptr;
 	}
 	Status ListTraverse(pvisit visit) {
 		LNode<T> *p = this->phead;
 		LNode<T> *q = this->ptail;
 		while (p != q) {
 			p = p->next;
-			visit(p->data);
+			visit((int*)(&(p->data)));
 		}
 		return OK;
 	}
