@@ -192,7 +192,6 @@ public:
 		cin >> start.i >> start.j;
 		cout << "ÇëÊäÈëÖÕµã×ø±ê: " ;
 		cin >> end.i >> end.j;
-		start.i--; start.j--; end.i--; end.j--;	
 		curpos = start;
 		stk.Push(start);
 		do {
