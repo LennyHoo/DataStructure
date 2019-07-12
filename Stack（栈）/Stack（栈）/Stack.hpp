@@ -166,6 +166,7 @@ public:
 		}
 	}
 	bool MazeSolution() {
+		// 回溯法 迷宫求解
 		struct MazePoint {
 		public:
 			int i, j;
@@ -178,7 +179,6 @@ public:
 				return ((this->i == p.i) && (this->j == p.j));
 			}
 		};
-		const int E = 0; const int S = 1; const int W = 2; const int N = 3;
 		Stack<MazePoint> stk;
 		int r, c;
 		cout << "请输入迷宫的行数和列数: ";
@@ -232,5 +232,59 @@ public:
 			}
 		} while (!stk.StackEmpty());
 		return false;
+	}
+	double EvaluateExpression(const char *exp) {
+		// 表达式求值
+		struct Tools {
+		public:
+			bool InOps(char ch) {
+				return (ch == '+') + (ch == '-') + (ch == '*') + (ch == '/') + (ch == '(') + (ch == ')') + (ch == '#');
+			}
+			char Precede(char a, char b) {
+				if (a == '*' || a == '/') return '>';
+				else if ((a == '+' || a == '-') && (b == '+' || b == '-')) return '>';
+				else if ((a == '+' || a == '-') && (b == '*' || b == '/')) return '<';
+				else if (a == '#'|| a == '(') return '<';
+				else return '=';
+			}
+			double compute(double a, double b, char ch) {
+				if (ch == '*') return a * b;
+				else if (ch == '/') return a / b;
+				else if (ch == '+') return a + b;
+				else return a - b;
+			}
+		};
+		Stack<char> OPTR, OPND;
+		int len = strlen(exp);
+		Tools tls;
+		OPTR.Push('#');
+		for (int i = 0; i < len; ++i) {
+			char cur = exp[i];
+			if (!(tls.InOps(cur)))	OPND.Push(cur);
+			else if (cur == '(') OPTR.Push(cur);
+			else if (cur == ')') {
+				while (OPTR.GetTop() != '(') OPND.Push(OPTR.Pop());
+				OPTR.Pop();
+			}
+			else if (cur == '#') {
+				while (OPTR.GetTop() != '#') OPND.Push(OPTR.Pop());
+				OPTR.Pop();
+			}
+			else if (tls.Precede(OPTR.GetTop(), cur) == '<') OPTR.Push(cur);
+			else if (tls.Precede(OPTR.GetTop(), cur) == '>') {
+				OPND.Push(OPTR.Pop()); OPTR.Push(cur);
+			} 
+		}
+		//while (!OPND.StackEmpty()) cout << OPND.Pop() << " ";
+		Stack<char> stk;
+		while (!OPND.StackEmpty()) stk.Push(OPND.Pop());
+		Stack<double> rst;
+		while (!stk.StackEmpty()) {
+			if (!tls.InOps(stk.GetTop())) rst.Push((stk.Pop()-'0'));
+			else {
+				rst.Push(tls.compute(rst.Pop(), rst.Pop(), stk.Pop()));
+			}
+		}
+		return rst.GetTop();
 	}
 };
