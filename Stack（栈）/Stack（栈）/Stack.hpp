@@ -14,6 +14,91 @@ typedef void (*pvist)(void *);
 #define ERROR 0
 #define INFEASIBLE -1
 
+// 顺序栈
+template <typename T>
+class Stack_Sq {
+private:
+	T *base;
+	T *top;
+	int stacksize;
+	int STACKINCREMENT;
+	int len;
+	friend ostream& operator<<(ostream &out, Stack_Sq &stk) {
+		for (int i = stk.StackLength() - 2; i >= 0; i--) out << *(stk.base + i) << " ";
+		return out;
+	}
+	friend ofstream& operator<<(ofstream &out, Stack_Sq &stk) {
+		T *p = stk.base, *q = stk.top;
+		while (p < q) { out << *p; ++p; }
+		return out;
+	}
+public:
+	Stack_Sq(int stk_size, int stk_increment) {
+		this->base = (T*)malloc(stk_size * sizeof(T));
+		if (this->base == nullptr) exit(OVERFLOW);
+		this->top = this->base;
+		this->stacksize = stk_size;
+		this->STACKINCREMENT = stk_increment;
+		this->len = 0;
+	}
+	~Stack_Sq() {
+		if(this->base!=nullptr){
+			free(this->base);
+			this->base = nullptr;
+			this->top = this->base;
+		}
+	}
+	Status InitStack(int stk_size, int stk_increment) {
+		this->base = (T*)malloc(stk_size * sizeof(T));
+		if (this->base == nullptr) exit(OVERFLOW);
+		this->top = this->base;
+		this->stacksize = stk_size;
+		this->STACKINCREMENT = stk_increment;
+		this->len = 0;
+		return OK;
+	}
+	Status ClearStack() {
+		memset(this->base, NULL, sizeof(T)*this->len);
+		this->len = 0;
+		this->top = this->base;
+		return OK;
+	}
+	bool StackEmpty() {
+		return (this->base == this->top) && (this->len = 0) && (this->stacksize = 0);
+	}
+	int StackLength() {
+		return this->len;
+	}
+	T& GetTop() {
+		if (this->top == this->base) throw "栈为空！";
+		return *(this->top - 1);
+	}
+	Status Push(T e) {
+		if (this->top - this->base >= this->stacksize) {
+			this->base = (T*)realloc(this->base, (this->stacksize + this->STACKINCREMENT) * sizeof(T));
+			if (this->base == nullptr) exit(OVERFLOW);
+			this->top = this->base + this->stacksize;
+			this->stacksize += this->STACKINCREMENT;
+		}
+		*(this->top++) = e;
+		++this->len;
+		return OK;
+	}
+	T& Pop() {
+		if (this->base == this->top) throw "栈为空！";
+		return *(--this->top);
+		--this->len;
+	}
+	Status StackTraverse(pvist visit) {
+		T *p = this->base, *q = this->top;
+		while (p < q) {
+			visit(p);
+			++p;
+		}
+		return OK;
+	}
+};
+
 template <typename T>
 struct Node {
 	T data;
@@ -149,11 +234,11 @@ public:
 		// 行编辑程序
 		char s[2048]="";
 		ofstream fout("./text.txt", ios::out);
-		Stack<char> *stk = new Stack<char>;
+		Stack_Sq<char> *stk = new Stack_Sq<char>(128, 128);
 		while (true) {
-			//cin.sync();
-			//cin.getline(s, 128, '\n');
-			gets_s(s);
+			cin.sync();
+			cin.getline(s, 128, '\n');
+			//gets_s(s);
 			int len = strlen(s);
 			if (!strcmp(s, "save!!")) return;
 			for (int i = 0; i < len; i++) {
@@ -286,5 +371,21 @@ public:
 			}
 		}
 		return rst.GetTop();
+	}
+	void hanoi(int n, char x, char y, char z) {
+		// 使用栈实现递归 汉诺塔
+		struct VTools {
+		public:
+			void move(char x, int n, char z) {
+				printf("Move disk %d from %c to %c\n", n, x, z);
+			}
+		};
+		VTools vts;
+		if (n == 1) vts.move(x, 1, z);	// 将编号为1的圆盘从x移动到z
+		else {
+			hanoi(n - 1, x, z, y);		// 将x上编号为1至n-1的圆盘移动到y,z作辅助塔
+			vts.move(x, n, z); 		// 将编号为n的圆盘移动到z
+			hanoi(n - 1, y, x, z);	  // 将y上编号为1至n-1的圆盘移动到z,x作辅助塔
+		}
 	}
 };
