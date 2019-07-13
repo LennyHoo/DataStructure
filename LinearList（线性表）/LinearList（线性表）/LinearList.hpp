@@ -6,7 +6,7 @@
 typedef int Status;
 typedef Status (*func_cmp)(void *a,void *b);
 //typedef Status(*func_cmp)(double &a, double &b);
-typedef Status (*pvisit)(int *temp);
+typedef Status (*pvisit)(void *temp);
 
 #define TRUE 1
 #define FALSE 0
@@ -224,18 +224,6 @@ public:
 		phead->next = nullptr;
 		this->len = 0;
 	}
-	~LinkList() {
-		LNode<T> *p = phead->next;
-		LNode<T> *q = p;
-		while (q->next->next!=nullptr) {
-			p = q->next;
-			if (q != NULL) {
-				delete q;
-			}
-			q = p;
-		}
-		this->len = 0;
-	}
 	Status InitList() {	       // 构建一个空的线性链表L
 		phead = &head;
 		ptail = phead;
@@ -244,14 +232,12 @@ public:
 		return OK;
 	}
 	Status ClearList() {		// 将线性链表置为空表， 并释放原链表的结点空间
-		LNode<T> *p = phead->next;
-		LNode<T> *q = p;
-		while (q!=this->ptail) {
-			p = q->next;
-			if (q != nullptr) {
-				free(q);
-				q = p;
-			}
+		LNode<T> *p = this->phead->next;
+		LNode<T> *q = nullptr;
+		while (p != nullptr) {
+			q = p->next;
+			free(p);
+			p = q;
 		}
 		this->len = 0;
 		ptail = phead;
