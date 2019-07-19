@@ -18,7 +18,7 @@ typedef unsigned char SString[MAXSTRLEN + 1];
 
 // 串的堆分配存储表示
 class HString {
-private:
+public:
 	char *ch;
 	int length;
 	friend ostream& operator<<(ostream &out, HString &s) {
@@ -161,5 +161,46 @@ public:
 			Sub->length = len;
 		}
 		return *Sub;
+	}
+	char& operator[](int index) {
+		return this->ch[index - 1];
+	}
+};
+
+class StringApplication {
+public:
+	int SimpleIndex(HString &S, HString &T, int pos) {
+		int i = pos, j = 1;
+		while (i <= S.StrLength() && j <= T.StrLength()) {
+			if (S[i] == T[j]) { ++i; ++j; }
+			else { i = i - j + 2; j = 1;}
+		}
+		if (j > T.StrLength()) return i - T.StrLength();
+		else return 0;
+	}
+	int Index_KMP(HString &S, HString &T, int pos) {
+		struct Tools {
+		public:
+			void get_nextval(HString T, int nextval[]) {
+				int i = 1; nextval[1] = 0; int j = 0;
+				while (i < T.StrLength()) {
+					if (j == 0 || T[i] == T[j]) {
+						++i; ++j;
+						if (T[i] != T[j]) nextval[i] = j;
+						else nextval[i] = nextval[j];
+					}
+					else j = nextval[j];
+				}
+			}
+		};
+		int i = pos, j = 1, next[128];
+		Tools tls;
+		tls.get_nextval(T, next);
+		while (i <= S.StrLength() && j <= T.StrLength()) {
+			if (j == 0 || S[i] == T[j]) { ++i; ++j; }
+			else j = next[j];
+		}
+		if (j > T.StrLength()) return i - T.StrLength();
+		else return 0;
 	}
 };
