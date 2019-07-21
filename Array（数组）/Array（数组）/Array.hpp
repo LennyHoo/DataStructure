@@ -153,6 +153,77 @@ public:
 		}
 		return OK;
 	}
+	TSMatrix<T> CopySMatrix() {
+		return *this;
+	}
+	TSMatrix<T>& AddSMatrix(TSMatrix<T> N) {
+		if (this->mu != N.mu || this->nu != N.nu) throw "MATH ERROR!";
+		TSMatrix<T> *Q = new TSMatrix<T>(this->mu, this->nu, 0);
+		memcpy_s(Q->data, Q->MAXSIZE * sizeof(Triple<T>), this->data, this->tu * sizeof(Triple<T>)); 
+		Q->tu += this->tu;
+		int Qtu = Q->tu;
+		for (int i = 0; i < N.tu; ++i) {
+			int flag = 1;
+			for (int j = 0; j < Qtu; ++j) {
+				if (Q->data[j].i == N.data[i].i&&Q->data[j].j == N.data[i].j) {
+					Q->data[j].e += N.data[i].e;
+					flag = 0;
+					break;
+				}
+			}
+			if (flag) {
+				Q->data[Q->tu].i = N.data[i].i; Q->data[Q->tu].j = N.data[i].j; Q->data[Q->tu].e = N.data[i].e;
+				++Q->tu;
+			}
+		}
+		for (int i = 0; i < Q->tu - 1; ++i) {
+			for (int j = Q->tu - 1; j > i; --j) {
+				if (Q->data[j].i < Q->data[j - 1].i) {
+					Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+				}
+				else if (Q->data[j].i == Q->data[j - 1].i) {
+					if (Q->data[j].j < Q->data[j - 1].j) {
+						Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+					}
+				}
+			}
+		}
+		return *Q;
+	}
+	TSMatrix<T>& SubtMatrix(TSMatrix<T> N) {
+		if (this->mu != N.mu || this->nu != N.nu) throw "MATH ERROR!";
+		TSMatrix<T> *Q = new TSMatrix<T>(this->mu, this->nu, 0);
+		memcpy_s(Q->data, Q->MAXSIZE * sizeof(Triple<T>), this->data, this->tu * sizeof(Triple<T>));
+		Q->tu += this->tu;
+		int Qtu = Q->tu;
+		for (int i = 0; i < N.tu; ++i) {
+			int flag = 1;
+			for (int j = 0; j < Qtu; ++j) {
+				if (Q->data[j].i == N.data[i].i&&Q->data[j].j == N.data[i].j) {
+					Q->data[j].e -= N.data[i].e;
+					flag = 0;
+					break;
+				}
+			}
+			if (flag) {
+				Q->data[Q->tu].i = N.data[i].i; Q->data[Q->tu].j = N.data[i].j; Q->data[Q->tu].e = -N.data[i].e;
+				++Q->tu;
+			}
+		}
+		for (int i = 0; i < Q->tu - 1; ++i) {
+			for (int j = Q->tu - 1; j > i; --j) {
+				if (Q->data[j].i < Q->data[j - 1].i) {
+					Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+				}
+				else if (Q->data[j].i == Q->data[j - 1].i) {
+					if (Q->data[j].j < Q->data[j - 1].j) {
+						Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+					}
+				}
+			}
+		}
+		return *Q;
+	}
 	TSMatrix<T>& TransposeSMatrix() {
 		TSMatrix<T> *tsmx = new TSMatrix<T>(this->MAXSIZE, this->nu, this->mu, this->tu);
 		if (tsmx->tu) {
@@ -169,7 +240,7 @@ public:
 		return *tsmx;
 	}
 	TSMatrix<T>& FastTransposeSMatrix() {
-		TSMatrix<T> *tsmx = new TSMatrix<T>(this->MAXSIZE, this->nu, this->mu, this->tu);
+		TSMatrix<T> *tsmx = new TSMatrix<T>(this->nu, this->mu, this->tu);
 		int *num = new int[this->nu + 1], *cpot = new int[this->nu + 1];
 		if (tsmx->tu) {
 			for (int col = 1; col <= this->nu; ++col) num[col] = 0;
@@ -185,6 +256,51 @@ public:
 		}
 		delete[] num; delete[] cpot;
 		return *tsmx;
+	}
+	TSMatrix<T>& MultSMatrix(TSMatrix<T> N) {
+		TSMatrix<T> *Q = new TSMatrix<T>(this->mu, N.nu, 0);
+		T *ctemp = new T[Q->nu + 1];
+		int *this_rpos = new int[this->mu + 1], *N_rpos = new int[this->mu + 1], *Q_rpos = new int[Q->mu + 1];
+		int *num = new int[this->mu + 1];
+		for (int i = 0; i < this->mu + 1; ++i) num[i] = 0;
+		for (int i = 0; i < this->tu; ++i) ++num[this->data[i].i];
+		this_rpos[1] = 1;
+		for (int i = 2; i <= this->mu; ++i) {
+			this_rpos[i] = this_rpos[i - 1] + num[i - 1];
+		}
+		num = new int[N.mu + 1];
+		for (int i = 0; i < N.mu + 1; ++i) num[i] = 0;
+		for (int i = 0; i < N.tu; ++i) ++num[N.data[i].i];
+		N_rpos[1] = 1;
+		for (int i = 2; i <= N.mu; ++i) {
+			N_rpos[i] = N_rpos[i - 1] + num[i - 1];
+		}
+		delete[] num;
+		int tp, t;
+		if (this->nu != N.mu) throw "MATH ERROR!";
+		if (this->tu*N.tu != 0) {
+			for (int arow = 1; arow <= this->mu; ++arow) {
+				memset(ctemp, 0, (Q->nu + 1) * sizeof(T));
+				Q_rpos[arow] = Q->tu + 1;
+				if (arow < this->mu) tp = this_rpos[arow + 1]; else tp = this->tu + 1;
+				for (int p = this_rpos[arow]; p < tp; ++p) {
+					int brow = this->data[p - 1].j;
+					if (brow < N.mu) t = N_rpos[brow + 1]; else t = N.tu + 1;
+					for (int q = N_rpos[brow]; q < t; ++q) {
+						int ccol = N.data[q - 1].j;
+						ctemp[ccol] += this->data[p - 1].e * N.data[q - 1].e;
+					}
+				}
+				for (int ccol = 1; ccol <= Q->nu; ++ccol) {
+					if (ctemp[ccol]) {
+						Q->data[Q->tu].i = arow; Q->data[Q->tu].j = ccol; Q->data[Q->tu].e = ctemp[ccol];
+						++Q->tu;
+					}
+				}
+			}
+		}
+		delete[] ctemp, this_rpos, N_rpos, Q_rpos;
+		return *Q;
 	}
 };
 
@@ -229,11 +345,13 @@ public:
 			}
 
 		}
-		int *num = new int[this->nu + 1];
-		for (int col = 1; col <= this->nu; ++col) num[col] = 0;
-		for (int t = 1; t <= this->tu; ++t) ++num[this->data[t - 1].j];
+		int *num = new int[this->mu + 1];
+		for (int i = 0; i < this->mu + 1; ++i) num[i] = 0;
+		for (int i = 0; i < this->tu; ++i) ++num[this->data[i].i];
 		this->rpos[1] = 1;
-		for (int col = 2; col <= this->nu; ++col) this->rpos[col] = this->rpos[col - 1] + num[col - 1];
+		for (int i = 2; i <= this->mu; ++i) {
+			this->rpos[i] = this->rpos[i - 1] + num[i - 1];
+		}
 		delete[] num;
 		return OK;
 	}
@@ -250,8 +368,79 @@ public:
 		}
 		return OK;
 	}
+	RLSMatrix<T> CopySMatrix() {
+		return *this;
+	}
+	RLSMatrix<T>& AddSMatrix(RLSMatrix<T> N) {
+		if (this->mu != N.mu || this->nu != N.nu) throw "MATH ERROR!";
+		RLSMatrix<T> *Q = new RLSMatrix<T>(this->mu, this->nu, 0);
+		memcpy_s(Q->data, Q->MAXSIZE * sizeof(Triple<T>), this->data, this->tu * sizeof(Triple<T>));
+		Q->tu += this->tu;
+		int Qtu = Q->tu;
+		for (int i = 0; i < N.tu; ++i) {
+			int flag = 1;
+			for (int j = 0; j < Qtu; ++j) {
+				if (Q->data[j].i == N.data[i].i&&Q->data[j].j == N.data[i].j) {
+					Q->data[j].e += N.data[i].e;
+					flag = 0;
+					break;
+				}
+			}
+			if (flag) {
+				Q->data[Q->tu].i = N.data[i].i; Q->data[Q->tu].j = N.data[i].j; Q->data[Q->tu].e = N.data[i].e;
+				++Q->tu;
+			}
+		}
+		for (int i = 0; i < Q->tu - 1; ++i) {
+			for (int j = Q->tu - 1; j > i; --j) {
+				if (Q->data[j].i < Q->data[j - 1].i) {
+					Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+				}
+				else if (Q->data[j].i == Q->data[j - 1].i) {
+					if (Q->data[j].j < Q->data[j - 1].j) {
+						Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+					}
+				}
+			}
+		}
+		return *Q;
+	}
+	RLSMatrix<T>& SubtMatrix(RLSMatrix<T> N) {
+		if (this->mu != N.mu || this->nu != N.nu) throw "MATH ERROR!";
+		RLSMatrix<T> *Q = new RLSMatrix<T>(this->mu, this->nu, 0);
+		memcpy_s(Q->data, Q->MAXSIZE * sizeof(Triple<T>), this->data, this->tu * sizeof(Triple<T>));
+		Q->tu += this->tu;
+		int Qtu = Q->tu;
+		for (int i = 0; i < N.tu; ++i) {
+			int flag = 1;
+			for (int j = 0; j < Qtu; ++j) {
+				if (Q->data[j].i == N.data[i].i&&Q->data[j].j == N.data[i].j) {
+					Q->data[j].e -= N.data[i].e;
+					flag = 0;
+					break;
+				}
+			}
+			if (flag) {
+				Q->data[Q->tu].i = N.data[i].i; Q->data[Q->tu].j = N.data[i].j; Q->data[Q->tu].e = -N.data[i].e;
+				++Q->tu;
+			}
+		}
+		for (int i = 0; i < Q->tu - 1; ++i) {
+			for (int j = Q->tu - 1; j > i; --j) {
+				if (Q->data[j].i < Q->data[j - 1].i) {
+					Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+				}
+				else if (Q->data[j].i == Q->data[j - 1].i) {
+					if (Q->data[j].j < Q->data[j - 1].j) {
+						Triple<T> temp = Q->data[j]; Q->data[j] = Q->data[j - 1]; Q->data[j - 1] = temp;
+					}
+				}
+			}
+		}
+		return *Q;
+	}
 	RLSMatrix<T>& TransposeSMatrix() {
-		RLSMatrix<T> *tsmx = new RLSMatrix<T>(this->MAXSIZE, this->nu, this->mu, this->tu);
+		RLSMatrix<T> *tsmx = new RLSMatrix<T>(this->nu, this->mu, this->tu);
 		if (tsmx->tu) {
 			int q = 0;
 			for (int col = 1; col < this->nu; col++) {	   // 因为之前已经排好序了， 为了转置之后还是顺序的
@@ -284,7 +473,7 @@ public:
 		return *tsmx;
 	}
 	RLSMatrix<T>& MultSMatrix(RLSMatrix<T> N) {
-		RLSMatrix<T> *Q = new RLSMatrix<T>(this->nu, N.mu, 0);
+		RLSMatrix<T> *Q = new RLSMatrix<T>(this->mu, N.nu, 0);
 		T *ctemp = new T[Q->nu + 1];
 		int tp, t;
 		if (this->nu != N.mu) throw "MATH ERROR!";
