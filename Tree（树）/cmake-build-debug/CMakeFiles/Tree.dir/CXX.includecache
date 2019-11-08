@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+K:/DataStructureExercise/Tree/main.cpp
+iostream
+K:/DataStructureExercise/Tree/iostream
+stack
+K:/DataStructureExercise/Tree/stack
+queue
+K:/DataStructureExercise/Tree/queue
+
