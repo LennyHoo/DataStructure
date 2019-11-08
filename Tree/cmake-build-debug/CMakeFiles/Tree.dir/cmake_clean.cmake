@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Tree.dir/main.cpp.obj"
+  "CMakeFiles/Tree.dir/Tree_test.cpp.obj"
   "Tree.pdb"
   "Tree.exe"
   "Tree.exe.manifest"

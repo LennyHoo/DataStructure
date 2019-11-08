@@ -6,11 +6,17 @@
 
 #IncludeRegexTransform: 
 
-K:/DataStructureExercise/Tree/main.cpp
+K:/DataStructureExercise/Tree/Tree.hpp
 iostream
 K:/DataStructureExercise/Tree/iostream
 stack
 K:/DataStructureExercise/Tree/stack
 queue
 K:/DataStructureExercise/Tree/queue
+
+K:/DataStructureExercise/Tree/Tree_test.cpp
+iostream
+K:/DataStructureExercise/Tree/iostream
+Tree.hpp
+K:/DataStructureExercise/Tree/Tree.hpp
 

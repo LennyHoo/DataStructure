@@ -56,27 +56,27 @@ include CMakeFiles/Tree.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Tree.dir/flags.make
 
-CMakeFiles/Tree.dir/main.cpp.obj: CMakeFiles/Tree.dir/flags.make
-CMakeFiles/Tree.dir/main.cpp.obj: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=K:\DataStructureExercise\Tree\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Tree.dir/main.cpp.obj"
-	D:\mingw64\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\Tree.dir\main.cpp.obj -c K:\DataStructureExercise\Tree\main.cpp
+CMakeFiles/Tree.dir/Tree_test.cpp.obj: CMakeFiles/Tree.dir/flags.make
+CMakeFiles/Tree.dir/Tree_test.cpp.obj: ../Tree_test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=K:\DataStructureExercise\Tree\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Tree.dir/Tree_test.cpp.obj"
+	D:\mingw64\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\Tree.dir\Tree_test.cpp.obj -c K:\DataStructureExercise\Tree\Tree_test.cpp
 
-CMakeFiles/Tree.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Tree.dir/main.cpp.i"
-	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E K:\DataStructureExercise\Tree\main.cpp > CMakeFiles\Tree.dir\main.cpp.i
+CMakeFiles/Tree.dir/Tree_test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Tree.dir/Tree_test.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E K:\DataStructureExercise\Tree\Tree_test.cpp > CMakeFiles\Tree.dir\Tree_test.cpp.i
 
-CMakeFiles/Tree.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Tree.dir/main.cpp.s"
-	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S K:\DataStructureExercise\Tree\main.cpp -o CMakeFiles\Tree.dir\main.cpp.s
+CMakeFiles/Tree.dir/Tree_test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Tree.dir/Tree_test.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S K:\DataStructureExercise\Tree\Tree_test.cpp -o CMakeFiles\Tree.dir\Tree_test.cpp.s
 
 # Object files for target Tree
 Tree_OBJECTS = \
-"CMakeFiles/Tree.dir/main.cpp.obj"
+"CMakeFiles/Tree.dir/Tree_test.cpp.obj"
 
 # External object files for target Tree
 Tree_EXTERNAL_OBJECTS =
 
-Tree.exe: CMakeFiles/Tree.dir/main.cpp.obj
+Tree.exe: CMakeFiles/Tree.dir/Tree_test.cpp.obj
 Tree.exe: CMakeFiles/Tree.dir/build.make
 Tree.exe: CMakeFiles/Tree.dir/linklibs.rsp
 Tree.exe: CMakeFiles/Tree.dir/objects1.rsp

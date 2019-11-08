@@ -1,3 +1,12 @@
+//
+// Created by ASUS on 2019/11/8.
+//
+
+#ifndef TREE_TREE_HPP
+#define TREE_TREE_HPP
+
+#endif //TREE_TREE_HPP
+
 #include "iostream"
 #include "stack"
 #include "queue"
@@ -18,7 +27,7 @@ Status PrintElement(string *e){
     return OK;
 }
 
-// ¶¨Òå¶ş²æÊ÷ÀàĞÍ£¨Á´Ê½´æ´¢½á¹¹£©
+// å®šä¹‰äºŒå‰æ ‘ç±»å‹ï¼ˆé“¾å¼å­˜å‚¨ç»“æ„ï¼‰
 class BiTree{
 public:
     friend class BiThrTree;
@@ -29,8 +38,8 @@ private:
     PointerTag LTag{}, RTag{};
 public:
     virtual Status CreateBiTree(){
-        // ÏÈĞò´´½¨¶ş²æÊ÷
-        // ¹¹½¨¶ş²æÁ´±í±íÊ¾µÄ¶ş²æÊ÷
+        // å…ˆåºåˆ›å»ºäºŒå‰æ ‘
+        // æ„å»ºäºŒå‰é“¾è¡¨è¡¨ç¤ºçš„äºŒå‰æ ‘
         string s;
         cin >> s;
         if(s=="NULL") this->data = nullptr;
@@ -49,9 +58,9 @@ public:
         return OK;
     }
     Status PreOrderTraverse(Status (*Visit)(string *e)){
-        // ²ÉÓÃ¶ş²æÁ´±í´æ´¢½á¹¹£¬Visit ÊÇ¶ÔÊı¾İÔªËØ²Ù×÷µÄÓ¦ÓÃº¯Êı
-        // ÏÈĞò±éÀú¶ş²æÊ÷µÄµİ¹éËã·¨£¬¶ÔÃ¿¸öÔªËØµ÷ÓÃº¯Êı Visit
-        // ×î¼òµ¥µÄ Visit º¯ÊıÊÇ£º
+        // é‡‡ç”¨äºŒå‰é“¾è¡¨å­˜å‚¨ç»“æ„ï¼ŒVisit æ˜¯å¯¹æ•°æ®å…ƒç´ æ“ä½œçš„åº”ç”¨å‡½æ•°
+        // å…ˆåºéå†äºŒå‰æ ‘çš„é€’å½’ç®—æ³•ï¼Œå¯¹æ¯ä¸ªå…ƒç´ è°ƒç”¨å‡½æ•° Visit
+        // æœ€ç®€å•çš„ Visit å‡½æ•°æ˜¯ï¼š
         // Status PrintElement(string *e){
         //      cout << *e << " ";
         //      return OK;
@@ -68,8 +77,8 @@ public:
     }
 
     virtual Status InOrderTraverse(Status (*Visit)(string *e)){
-        // ²ÉÓÃ¶ş²æÁ´±í´æ´¢½á¹¹£¬Visit ÊÇ¶ÔÊı¾İÔªËØ²Ù×÷µÄÓ¦ÓÃº¯Êı
-        // ÖĞĞò±éÀú¶ş²æÊ÷µÄ·Çµİ¹éËã·¨£¬¶ÔÃ¿¸öÊı¾İÔªËØµ÷ÓÃº¯Êı Visit
+        // é‡‡ç”¨äºŒå‰é“¾è¡¨å­˜å‚¨ç»“æ„ï¼ŒVisit æ˜¯å¯¹æ•°æ®å…ƒç´ æ“ä½œçš„åº”ç”¨å‡½æ•°
+        // ä¸­åºéå†äºŒå‰æ ‘çš„éé€’å½’ç®—æ³•ï¼Œå¯¹æ¯ä¸ªæ•°æ®å…ƒç´ è°ƒç”¨å‡½æ•° Visit
         stack<BiTree*> s;
         s.push(this);
         while(!s.empty()){
@@ -90,8 +99,8 @@ public:
         return OK;
     }
     Status PostOrderTraverse(Status (*Visit)(string *e)){
-        // ²ÉÓÃÈı²æÁ´±í£¨¼´´øË«Ç×Óò£©´æ´¢½á¹¹£¬Visit ÊÇ¶ÔÊı¾İÔªËØ²Ù×÷µÄÓ¦ÓÃº¯Êı
-        // ºóĞò±éÀú¶ş²æÊ÷µÄ·Çµİ¹éËã·¨£¬¶ÔÃ¿¸öÊı¾İÔªËØµ÷ÓÃº¯Êı Visit
+        // é‡‡ç”¨ä¸‰å‰é“¾è¡¨ï¼ˆå³å¸¦åŒäº²åŸŸï¼‰å­˜å‚¨ç»“æ„ï¼ŒVisit æ˜¯å¯¹æ•°æ®å…ƒç´ æ“ä½œçš„åº”ç”¨å‡½æ•°
+        // ååºéå†äºŒå‰æ ‘çš„éé€’å½’ç®—æ³•ï¼Œå¯¹æ¯ä¸ªæ•°æ®å…ƒç´ è°ƒç”¨å‡½æ•° Visit
         BiTree *T = this;
         BiTree *p = T;
         while(T->view!=OKAY){
@@ -116,8 +125,8 @@ public:
         return OK;
     }
     Status DepthOrderTraverse(Status (*Visit)(string *e)){
-        // ²ÉÓÃ¶ş²æÁ´±í´æ´¢½á¹¹£¬Visit ÊÇ¶ÔÊı¾İÔªËØ²Ù×÷µÄÓ¦ÓÃº¯Êı
-        // ²ãĞò±éÀú¶ş²æÊ÷µÄ·Çµİ¹éËã·¨£¬¶ÔÃ¿¸öÊı¾İÔªËØµ÷ÓÃº¯Êı Visit
+        // é‡‡ç”¨äºŒå‰é“¾è¡¨å­˜å‚¨ç»“æ„ï¼ŒVisit æ˜¯å¯¹æ•°æ®å…ƒç´ æ“ä½œçš„åº”ç”¨å‡½æ•°
+        // å±‚åºéå†äºŒå‰æ ‘çš„éé€’å½’ç®—æ³•ï¼Œå¯¹æ¯ä¸ªæ•°æ®å…ƒç´ è°ƒç”¨å‡½æ•° Visit
         queue<BiTree*> q;
         q.push(this);
         while(!q.empty()){
@@ -131,7 +140,7 @@ public:
     }
 };
 
-// ¶¨ÒåÏßË÷¶ş²æÊ÷ÀàĞÍ£¨Á´Ê½´æ´¢½á¹¹£©
+// å®šä¹‰çº¿ç´¢äºŒå‰æ ‘ç±»å‹ï¼ˆé“¾å¼å­˜å‚¨ç»“æ„ï¼‰
 class BiThrTree{
 public:
     friend class BiTree;
@@ -142,8 +151,8 @@ private:
     BiThrTree *pre{};
 public:
     Status CreateBiTree(){
-        // ÏÈĞò´´½¨¶ş²æÊ÷
-        // ¹¹½¨¶ş²æÁ´±í±íÊ¾µÄ¶ş²æÊ÷
+        // å…ˆåºåˆ›å»ºäºŒå‰æ ‘
+        // æ„å»ºäºŒå‰é“¾è¡¨è¡¨ç¤ºçš„äºŒå‰æ ‘
         string s;
         cin >> s;
         if(s=="NULL") this->data = nullptr;
@@ -158,7 +167,7 @@ public:
         return OK;
     }
     Status CreateBiThrTree(){
-        // Éú³ÉÏßË÷¶ş²æÊ÷
+        // ç”Ÿæˆçº¿ç´¢äºŒå‰æ ‘
         CreateBiTree();
         auto *T = new BiThrTree;
         *T = *this;
@@ -166,7 +175,7 @@ public:
         return OK;
     }
     Status InOrderThreading(BiThrTree *T){
-        // ÖĞĞò±éÀú¶ş²æÊ÷£¬²¢½«ÆäÖĞĞòÏßË÷»¯
+        // ä¸­åºéå†äºŒå‰æ ‘ï¼Œå¹¶å°†å…¶ä¸­åºçº¿ç´¢åŒ–
         this->data = new string;
         this->LTag = Link;  this->RTag = Thread;
         this->r_child = this;
@@ -181,11 +190,11 @@ public:
     }
     void InThreading(BiThrTree *p){
         if(p->data){
-            InThreading(p->l_child);    // ×ó×ÓÊ÷ÏßË÷»¯
-            if(!p->l_child->data){p->LTag = Thread; p->l_child = this->pre;}  // Ç°ÇıÏßË÷
-            if(!this->pre->r_child->data){pre->RTag = Thread; this->pre->r_child = p;} // ºó¼ÌÏßË÷
+            InThreading(p->l_child);    // å·¦å­æ ‘çº¿ç´¢åŒ–
+            if(!p->l_child->data){p->LTag = Thread; p->l_child = this->pre;}  // å‰é©±çº¿ç´¢
+            if(!this->pre->r_child->data){pre->RTag = Thread; this->pre->r_child = p;} // åç»§çº¿ç´¢
             this->pre = p;
-            InThreading(p->r_child); // ÓÒ×ÓÊ÷ÏßË÷»¯
+            InThreading(p->r_child); // å³å­æ ‘çº¿ç´¢åŒ–
         }
     }
     Status InOrderTraverse(Status (*Visit)(string *e)){
@@ -201,22 +210,3 @@ public:
         return OK;
     }
 };
-
-
-int main() {
-    BiTree tree{};
-    cout << "´´½¨Ê÷£º";
-    tree.CreateBiTree();
-    cout << "Ç°Ğò±éÀú£º";
-    tree.PreOrderTraverse(PrintElement);
-    cout << endl;
-    cout << "ÖĞĞò±éÀú£º";
-    tree.InOrderTraverse(PrintElement);
-    cout << endl;
-    cout << "ºóĞò±éÀú£º";
-    tree.PostOrderTraverse(PrintElement);
-    cout << endl;
-    cout << "²ãĞò±éÀú£º";
-    tree.DepthOrderTraverse(PrintElement);
-    return 0;
-}
